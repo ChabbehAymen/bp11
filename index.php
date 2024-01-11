@@ -1,24 +1,34 @@
 <?php
-require "index.html";
-require "User.php";
+require_once "index.html";
+require_once "User.php";
 
 
-define("JFPath", "data/users.json");
+$JFPath = "data/users.json";
+$jsonData = json_decode(file_get_contents($JFPath), true);
 $name;
 $last_name;
+$user_birth_date;
 $user_email;
 $user_name;
 $password;
 $confirm_password;
+ 
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $jsonData = json_decode(file_get_contents($jfpath), true);
+    $userId = sizeof($jsonData['users']);
     extractValues();
     if (isUserDataValid()) {
         $user = createUser();
+        array_push($jsonData['users'], [$userId => $user->__toArray()]);
+        $fp = fopen($JFPath,'w');
+        fwrite($fp, json_encode($jsonData));
+        fclose($fp);
+        echo'<script>window.location.replace("http://localhost//bp11/login_page/login.php");</script>';
+        exit;
+    }else{
+        print'<input type="hiden" value="error" hidden="true">';
     }
-
-
 }
 
 // extracting data from inputs
@@ -26,6 +36,7 @@ function extractValues()
 {
     getNameFromInput();
     getLastNameFromInput();
+    getBirthDateFromInput();
     getEmailFromInput();
     getUserNameFromInput();
     getPasswordFromInput();
@@ -42,6 +53,11 @@ function getLastNameFromInput()
 {
     global $last_name;
     $last_name = $_POST['last_name'];
+}
+
+function getBirthDateFromInput(){
+    global $birth_date;
+    $birth_date = $_POST['birth_date'];
 }
 
 function getEmailFromInput()
@@ -71,7 +87,7 @@ function getPasswordConfirmationFromInput()
 // validate user provided data
 function isUserDataValid()
 {
-    return isNameValid() and isLastNameValid() and isEmailValid() and isPasswordValid() and isSamePassword();
+    return isNameValid() and isLastNameValid()and isBirthDateValid() and isEmailValid() and isPasswordValid() and isSamePassword();
 }
 
 function isNameValid()
@@ -86,6 +102,10 @@ function isLastNameValid()
     return $last_name !== "" && !strlen($last_name) < 3;
 }
 
+function isBirthDateValid(){
+    global $birth_date;
+    return $birth_date !== "";
+}
 function isEmailValid()
 {
     global $email;
@@ -107,10 +127,11 @@ function isSamePassword()
 // create a user and sets its data
 function createUser()
 {
-    global $name, $last_name, $email, $user_name, $password;
+    global $name, $last_name, $birth_date,$email, $user_name, $password;
     $user = new User();
     $user->setName($name);
     $user->setLastName($last_name);
+    $user->setBirthDay($birth_date);
     $user->setEmail($email);
     $user->setUserName($user_name);
     $user->setPassword($password);

@@ -49,5 +49,15 @@ class User{
         return $this->password;
     }
 
+    public function __toArray(){
+        return [
+            "name"=> (string)$this->getName(),
+            "lastName"=>(string)$this->getLastName(),
+            "email"=> (string)$this->getEmail(),
+            "birthDay"=> (string)$this->getBirthDay(),
+            "userName"=> (string)$this->getUserName(),
+            "password"=> (string)$this->getPassword(),
+        ];
+    }
 
 }
