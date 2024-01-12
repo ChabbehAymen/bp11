@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         }
     } else {
-        print '<input type="hiden" value="error" hidden="true">';
+        //TODO handel input error
     }
 }
 

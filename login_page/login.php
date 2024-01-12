@@ -76,11 +76,11 @@ function isEmail()
 function SuccesfulLogin($user)
 {
 global $JFPath, $jsonData;
-$user["lastSastion"]= "hello";
-$jsonData[$user['userID']-1] = $user;
+$user["lastSastion"]= date('l jS \of F Y h:i:s A');
+$jsonData['users'][$user['userID']-1] = $user;
     $fp = fopen($JFPath, 'w');
-    fwrite($fp, json_encode($jsonData));
+    fwrite($fp, json_encode($jsonData, JSON_PRETTY_PRINT));
     fclose($fp);
-    // header('');
-    // exit;
+    header('Location: ../home_page/home.php');
+    exit;
 }
