@@ -49,14 +49,16 @@ class User{
         return $this->password;
     }
 
-    public function __toArray(){
+    public function __toArray($user_id){
         return [
+            "userID"=> $user_id,
             "name"=> (string)$this->getName(),
             "lastName"=>(string)$this->getLastName(),
             "email"=> (string)$this->getEmail(),
             "birthDay"=> (string)$this->getBirthDay(),
             "userName"=> (string)$this->getUserName(),
             "password"=> (string)$this->getPassword(),
+            "lastSastion"=>""
         ];
     }
 

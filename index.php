@@ -12,22 +12,25 @@ $user_email;
 $user_name;
 $password;
 $confirm_password;
- 
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $userId = sizeof($jsonData['users']);
+    $userId = sizeof($jsonData['users']) + 1;
     extractValues();
     if (isUserDataValid()) {
-        $user = createUser();
-        array_push($jsonData['users'], [$userId => $user->__toArray()]);
-        $fp = fopen($JFPath,'w');
-        fwrite($fp, json_encode($jsonData));
-        fclose($fp);
-        echo'<script>window.location.replace("http://localhost//bp11/login_page/login.php");</script>';
-        exit;
-    }else{
-        print'<input type="hiden" value="error" hidden="true">';
+        if (isUserExist()) {
+            echo "there is a user with this data";
+        }else {
+            $user = createUser();
+            array_push($jsonData['users'], $user->__toArray($userId));
+            $fp = fopen($JFPath, 'w');
+            fwrite($fp, json_encode($jsonData));
+            fclose($fp);
+            header('Location: /login_page/login.php');
+            exit;
+        }
+    } else {
+        print '<input type="hiden" value="error" hidden="true">';
     }
 }
 
@@ -55,7 +58,8 @@ function getLastNameFromInput()
     $last_name = $_POST['last_name'];
 }
 
-function getBirthDateFromInput(){
+function getBirthDateFromInput()
+{
     global $birth_date;
     $birth_date = $_POST['birth_date'];
 }
@@ -87,7 +91,7 @@ function getPasswordConfirmationFromInput()
 // validate user provided data
 function isUserDataValid()
 {
-    return isNameValid() and isLastNameValid()and isBirthDateValid() and isEmailValid() and isPasswordValid() and isSamePassword();
+    return isNameValid() and isLastNameValid() and isBirthDateValid() and isEmailValid() and isPasswordValid() and isSamePassword();
 }
 
 function isNameValid()
@@ -102,7 +106,8 @@ function isLastNameValid()
     return $last_name !== "" && !strlen($last_name) < 3;
 }
 
-function isBirthDateValid(){
+function isBirthDateValid()
+{
     global $birth_date;
     return $birth_date !== "";
 }
@@ -124,10 +129,22 @@ function isSamePassword()
     return $confirm_password === $password;
 }
 
+// checks if user exist
+function isUserExist()
+{
+    global $jsonData, $email, $user_name;
+    foreach ($jsonData['users'] as $user) {
+        if ($user['email'] === $email || $user['userName'] === $user_name) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // create a user and sets its data
 function createUser()
 {
-    global $name, $last_name, $birth_date,$email, $user_name, $password;
+    global $name, $last_name, $birth_date, $email, $user_name, $password;
     $user = new User();
     $user->setName($name);
     $user->setLastName($last_name);
