@@ -1,5 +1,5 @@
 <?php
-require_once "index.html";
+require_once "signup.html";
 require_once "User.php";
 
 
@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $fp = fopen($JFPath, 'w');
             fwrite($fp, json_encode($jsonData));
             fclose($fp);
-            header('Location: /login_page/login.php');
+            header('Location: /login_page/');
             exit;
         }
     } else {

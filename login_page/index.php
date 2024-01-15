@@ -8,6 +8,19 @@ $jsonData = json_decode(file_get_contents($JFPath), true);
 $user_name_email;
 $password;
 
+if (isset($_SESSION['is_loged_account'])) {
+    if ($_SESSION['is_loged_account'] !== 'false') {
+        $loged_account;
+        if($_SESSION['is_loged_account'] === 'admin') loginAsAdmin();
+        else{
+            foreach($jsonData['users'] as $user){
+                if ($user['userName'] === $_SESSION['is_loged_account']) SuccesfulLogin($user);
+            }
+        }
+    }
+}
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     extractDataFromInputs();
     if ($user_name_email == 'admin' and $password == 'admin') {
@@ -80,18 +93,25 @@ function isEmail()
 function SuccesfulLogin($user)
 {
     global $JFPath, $jsonData;
-    $user["lastSastion"] = date('l jS \of F Y h:i:s A');
+    $user["l n"] = date('l jS \of F Y h:i:s A');
     $jsonData['users'][$user['userID'] - 1] = $user;
     $fp = fopen($JFPath, 'w');
     fwrite($fp, json_encode($jsonData, JSON_PRETTY_PRINT));
     fclose($fp);
     $_SESSION['as_admin']= 'false';
     $_SESSION['userID']= $user['userID'];
-    header('Location: ../home_page/home.php');
-    exit;
+    $_SESSION['is_loged_account'] = $user['userName'];
+    navigateToHomePage();
 }
 
 function loginAsAdmin(){
     $_SESSION['as_admin']= 'true';
-    header('Location: ../home_page/home.php');
+    $_SESSION['is_loged_account'] ='admin';
+    var_dump($_SESSION['is_loged_account']);
+    navigateToHomePage();
+}
+
+function navigateToHomePage(){
+    header('Location: ../home_page/');
+    exit;
 }

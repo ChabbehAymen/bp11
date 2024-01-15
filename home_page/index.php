@@ -14,10 +14,18 @@ if (isset($_SESSION["as_admin"]) and $_SESSION["as_admin"] == "true") {
     displayUserData((string)$user['name'], (string)$user['lastName'], (string)$user['birthDay'], (string)$user['userName'], (string)$user['name'], (string)$user['password']);
 }
 
+
+if (isset($_POST['log_out'])) {
+  session_destroy();
+  header('Location: ../');;
+  exit;
+}
+
+
 function createUsersTable()
 {
-    echo'<script>document.body.innerHtml ="";</script>
-    document.querySelector("form").innerHTML = "";';
+    echo'<script>document.body.innerHtml ="";
+    document.querySelector("form").innerHTML = "";</script>';
     echo '
     <h1>Users</h1>
     <table>
