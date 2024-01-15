@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         }
     } else {
-        //TODO handel input error
+        sendErrorMassege('Unvalid User Data');
     }
 }
 
@@ -153,4 +153,8 @@ function createUser()
     $user->setUserName($user_name);
     $user->setPassword($password);
     return $user;
+}
+
+function sendErrorMassege($massege){
+    echo"<script>document.querySelector('input[name='error-controler']').value = $massege;</script>";
 }

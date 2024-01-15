@@ -1,6 +1,7 @@
 <?php
 require_once "login.html";
 
+session_start();
 
 $JFPath = "../data/users.json";
 $jsonData = json_decode(file_get_contents($JFPath), true);
@@ -9,6 +10,9 @@ $password;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     extractDataFromInputs();
+    if ($user_name_email == 'admin' and $password == 'admin') {
+        loginAsAdmin();
+    }
     if (isInputsValid()) {
         foreach ($jsonData['users'] as $user) {
             if (($user_name_email == $user['email'] or $user_name_email == $user['userName']) and $password == $user['password']) {
@@ -75,12 +79,19 @@ function isEmail()
 }
 function SuccesfulLogin($user)
 {
-global $JFPath, $jsonData;
-$user["lastSastion"]= date('l jS \of F Y h:i:s A');
-$jsonData['users'][$user['userID']-1] = $user;
+    global $JFPath, $jsonData;
+    $user["lastSastion"] = date('l jS \of F Y h:i:s A');
+    $jsonData['users'][$user['userID'] - 1] = $user;
     $fp = fopen($JFPath, 'w');
     fwrite($fp, json_encode($jsonData, JSON_PRETTY_PRINT));
     fclose($fp);
+    $_SESSION['as_admin']= 'false';
+    $_SESSION['userID']= $user['userID'];
     header('Location: ../home_page/home.php');
     exit;
+}
+
+function loginAsAdmin(){
+    $_SESSION['as_admin']= 'true';
+    header('Location: ../home_page/home.php');
 }
