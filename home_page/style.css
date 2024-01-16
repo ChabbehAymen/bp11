@@ -3,12 +3,21 @@ body{
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 10%;
 }
 
 .forms{
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 10%;
   width: 100%;
-display: flex;
-justify-content: center;
+  display: flex;
+  justify-content: center;
+  gap: 3%;
+}
+
+.forms input{
+  width: 6rem;
 }
 
 table {
@@ -26,4 +35,15 @@ table {
 
   table tbody {
     background-color: #f2f2f2;
+  }
+
+  .user-card{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 4px black;
+    background-color: white;
+    width: fit-content;
+    padding: 3%;
   }

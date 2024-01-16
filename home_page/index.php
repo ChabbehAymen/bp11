@@ -67,9 +67,12 @@ function displayUsersForAdmin()
 
 function displayUserData($name, $last_name, $birth_date, $email, $user_name, $password)
 {
-    echo "<h1 class='name-and-lastName'>$last_name $name</h1>
+    echo "
+    <div class='user-card'>
+    <h1 class='name-and-lastName'>$last_name $name</h1>
     <p class='user-name'>$user_name</p>
     <p class='email'>$email</p>
     <p class='birth-date'>$birth_date</p>
-    <p class='password'>$password</p>";
+    <p class='password'>$password</p>
+    </div>";
 }
