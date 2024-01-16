@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once "signup.html";
 require_once "User.php";
 
@@ -12,6 +13,19 @@ $user_email;
 $user_name;
 $password;
 $confirm_password;
+
+
+if (isset($_SESSION['is_loged_account'])) {
+    if ($_SESSION['is_loged_account'] !== 'false') {
+        $loged_account;
+        if($_SESSION['is_loged_account'] === 'admin') navigateToHomePage();
+        else{
+            foreach($jsonData['users'] as $user){
+                if ($user['userName'] === $_SESSION['is_loged_account']) navigateToHomePage();
+            }
+        }
+    }
+}
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -157,4 +171,9 @@ function createUser()
 
 function sendErrorMassege($massege){
     echo"<script>document.querySelector('input[name='error-controler']').value = $massege;</script>";
+}
+
+function navigateToHomePage(){
+    header('Location: /home_page/');
+    exit;
 }
