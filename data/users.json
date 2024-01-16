@@ -12,8 +12,7 @@
             "birthDay": "2003-10-25",
             "userName": "aymen_chabbeh",
             "password": "12345678",
-            "lastSastion": "Saturday 13th of January 2024 03:28:28 PM",
-            "l n": "Tuesday 16th of January 2024 04:23:38 PM"
+            "lastSastion": "Saturday 13th of January 2024 03:28:28 PM"
         },
         {
             "userID": 2,
@@ -42,16 +41,6 @@
             "email": "ayoub@gmail.com",
             "birthDay": "2024-01-12",
             "userName": "aoub_bozidi",
-            "password": "12345678",
-            "lastSastion": ""
-        },
-        {
-            "userID": 5,
-            "name": "test",
-            "lastName": "test",
-            "email": "test@",
-            "birthDay": "2222-02-22",
-            "userName": "test_t",
             "password": "12345678",
             "lastSastion": ""
         }

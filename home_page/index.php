@@ -1,18 +1,24 @@
 <?php
 session_start();
 require_once "home.html";
+require_once "../User.php";
 
 
 $jsonData = json_decode(file_get_contents("../data/users.json"), true);
 
 
 if (isset($_SESSION["as_admin"]) and $_SESSION["as_admin"] == "true") {
-    createUsersTable();
-    displayUsersForAdmin();
+  createUsersTable();
+  displayUsersForAdmin();
 } else {
-    $user = $jsonData['users'][$_SESSION['userID'] - 1];
-    displayUserData((string)$user['name'], (string)$user['lastName'], (string)$user['birthDay'], (string)$user['userName'], (string)$user['name'], (string)$user['password']);
+  foreach ($jsonData['users'] as $user) {
+    if ($user['userID'] == $_SESSION['userID']) {
+      $mUser = createUserObject($user);
+      displayUserData($mUser);
+    }
+  }
 }
+
 
 
 if (isset($_POST['log_out'])) {
@@ -21,12 +27,15 @@ if (isset($_POST['log_out'])) {
   exit;
 }
 
+if (isset($_POST['change_data'])) {
+}
+
 
 function createUsersTable()
 {
-    echo'<script>document.body.innerHtml ="";
+  echo '<script>document.body.innerHtml ="";
     document.querySelector("form").innerHTML = "";</script>';
-    echo '
+  echo '
     <h1>Users</h1>
     <table>
     <thead>
@@ -48,31 +57,43 @@ function createUsersTable()
   </table>';
 }
 
-function displayUsersForAdmin()
+function createUserObject($user)
 {
-    global $jsonData;
-    foreach ($jsonData['users'] as $user) {
-        echo "
-        <script>
-            document.querySelector(' table tbody').innerHTML+=`<tr><td>".$user['userName']."</td><td>".$user['name']."</td>
-            <td>".$user['lastName']."</td>
-            <td>".$user['email']."</td>
-            <td>".$user['birthDay']."</td>
-            <td>".$user['password']."</td>
-            <td>".$user['lastSastion']."</td>
-            </tr>`;
-        </script>";
-    }
+  $mUser = new User();
+  $mUser->setName($user['name']);
+  $mUser->setLastName($user['lastName']);
+  $mUser->setUserName($user['userName']);
+  $mUser->setBirthDay($user['birthDay']);
+  $mUser->setEmail($user['email']);
+  $mUser->setPassword($user['password']);
+  return $mUser;
 }
 
-function displayUserData($name, $last_name, $birth_date, $email, $user_name, $password)
+function displayUsersForAdmin()
 {
+  global $jsonData;
+  foreach ($jsonData['users'] as $user) {
     echo "
+        <script>
+            document.querySelector(' table tbody').innerHTML+=`<tr><td>" . $user['userName'] . "</td><td>" . $user['name'] . "</td>
+            <td>" . $user['lastName'] . "</td>
+            <td>" . $user['email'] . "</td>
+            <td>" . $user['birthDay'] . "</td>
+            <td>" . $user['password'] . "</td>
+            <td>" . $user['lastSastion'] . "</td>
+            </tr>`;
+        </script>";
+  }
+}
+
+function displayUserData(object $user)
+{
+  echo "
     <div class='user-card'>
-    <h1 class='name-and-lastName'>$last_name $name</h1>
-    <p class='user-name'>$user_name</p>
-    <p class='email'>$email</p>
-    <p class='birth-date'>$birth_date</p>
-    <p class='password'>$password</p>
+    <div><input type='text' value='".$user->getLastName()."'><input type='text' value='".$user->getName()."'></div>
+    <p class='user-name'>".$user->getUserName()."</p>
+    <p class='email'>".$user->getEmail()."</p>
+    <input type='date' value='".$user->getBirthDay()."'>
+    <input type='text' value='".$user->getPassword()."'>
     </div>";
 }
