@@ -93,7 +93,7 @@ function isEmail()
 function SuccesfulLogin($user)
 {
     global $JFPath, $jsonData;
-    $user["l n"] = date('l jS \of F Y h:i:s A');
+    $user["lastSastion"] = date('l jS \of F Y h:i:s A');
     $jsonData['users'][$user['userID'] - 1] = $user;
     $fp = fopen($JFPath, 'w');
     fwrite($fp, json_encode($jsonData, JSON_PRETTY_PRINT));

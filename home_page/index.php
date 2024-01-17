@@ -5,17 +5,20 @@ require_once "../User.php";
 
 
 $jsonData = json_decode(file_get_contents("../data/users.json"), true);
+$mUser; $user_index;
 
 
 if (isset($_SESSION["as_admin"]) and $_SESSION["as_admin"] == "true") {
   createUsersTable();
   displayUsersForAdmin();
 } else {
-  foreach ($jsonData['users'] as $user) {
-    if ($user['userID'] == $_SESSION['userID']) {
-      $mUser = createUserObject($user);
+  global $mUser, $user_index, $jsonData;
+  for ($i=0; $i < count($jsonData['users']); $i++) { 
+    if ($jsonData['users'][$i]['userID'] == $_SESSION['userID']) {
+      $user_index = $i;
+      $mUser = createUserObject($jsonData['users'][$i]);
       displayUserData($mUser);
-    }
+  }
   }
 }
 
@@ -28,8 +31,43 @@ if (isset($_POST['log_out'])) {
 }
 
 if (isset($_POST['change_data'])) {
+  global $jsonData;
+  $newName = $_POST['name'];
+  $newUserLastName = $_POST['last_name'];
+  $newUserBirthDate = $_POST['birth_date'];
+  $newUserPassword = $_POST['password'];
+  UpdateUsersData($newName, $newUserLastName, $newUserBirthDate, $newUserPassword);
+  updateDataBase();
+  saveDataChanges();
+  echo "<meta http-equiv='refresh' content='0'>";
 }
 
+function UpdateUsersData(string $name, string $last_name, string $birthDate, string $password)
+{
+  global $mUser;
+  $mUser->setName($name);
+  $mUser->setLastName($last_name);
+  $mUser->setBirthDay($birthDate);
+  $mUser->setPassword($password);
+
+}
+
+
+  // updating user in data base
+function updateDataBase(){
+  global $mUser, $user_index, $jsonData;
+  $jsonData['users'][$user_index]['name'] = $mUser->getName();
+  $jsonData['users'][$user_index]['lastName'] = $mUser->getLastName();
+  $jsonData['users'][$user_index]['birthDay'] = $mUser->getBirthDay();
+  $jsonData['users'][$user_index]['password'] = $mUser->getPassword();
+}
+
+function saveDataChanges(){
+  global $jsonData;
+  $fp = fopen("../data/users.json", 'w');
+  fwrite($fp, json_encode($jsonData, JSON_PRETTY_PRINT));
+  fclose($fp);
+}
 
 function createUsersTable()
 {
@@ -90,10 +128,13 @@ function displayUserData(object $user)
 {
   echo "
     <div class='user-card'>
-    <div><input type='text' value='".$user->getLastName()."'><input type='text' value='".$user->getName()."'></div>
-    <p class='user-name'>".$user->getUserName()."</p>
-    <p class='email'>".$user->getEmail()."</p>
-    <input type='date' value='".$user->getBirthDay()."'>
-    <input type='text' value='".$user->getPassword()."'>
+    <form action='index.php' method='POST'>
+    <div><input type='text' value='" . $user->getLastName() . "' name='last_name'><input type='text' value='" . $user->getName() . "' name='name'></div>
+    <p class='user-name'>" . $user->getUserName() . "</p>
+    <p class='email'>" . $user->getEmail() . "</p>
+    <input type='date' value='" . $user->getBirthDay() . "' name='birth_date'>
+    <input type='text' value='" . $user->getPassword() . "' name='password'>
+    <input type='submit' value='change_data' name='change_data'>
+    <form>
     </div>";
 }
